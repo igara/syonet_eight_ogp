@@ -1,0 +1,5 @@
+{
+  "watch": ["src"],
+  "ext": "ts",
+  "exec": "node --inspect=0.0.0.0:9233 --require esbuild-register ./dev.ts"
+}
