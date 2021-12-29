@@ -1,2 +1,2 @@
-serverless.yml
+dist
 .env.production
