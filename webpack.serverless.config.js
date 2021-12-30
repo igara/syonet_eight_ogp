@@ -33,7 +33,11 @@ module.exports = {
     rules: [
       {
         test: /\.ts$/,
-        loader: 'babel-loader',
+        loader: 'esbuild-loader',
+        options: {
+          loader: 'ts',
+          tsconfigRaw: require('./tsconfig.json'),
+        },
       },
     ],
   },

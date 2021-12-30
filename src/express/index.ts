@@ -1,13 +1,11 @@
 import express from 'express';
+import index from './routes';
 import www from './routes/www';
 
 const main = () => {
   const app = express();
 
-  app.get('/', (_, res) => {
-    res.send('started');
-  });
-
+  app.use('/', index);
   app.use('/www', www);
 
   app.use((err, res) => {
