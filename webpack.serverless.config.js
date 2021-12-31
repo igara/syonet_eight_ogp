@@ -3,7 +3,6 @@ const slsw = require('serverless-webpack');
 const path = require('path');
 const nodeExternals = require('webpack-node-externals');
 const TsconfigPathsPlugin = require('tsconfig-paths-webpack-plugin');
-const CopyWebpackPlugin = require('copy-webpack-plugin');
 
 const enviroment = process.env.NODE_ENV || 'development';
 
@@ -12,23 +11,11 @@ module.exports = {
   mode: enviroment,
   entry: slsw.lib.entries,
   target: 'node',
+  node: {
+    __dirname: true,
+  },
   externals: [nodeExternals()],
-  plugins: [
-    // new CopyWebpackPlugin({
-    //   patterns: [
-    //     {
-    //       from: "NotoSansJP-Regular.otf",
-    //       to: "./src/ogp",
-    //       context: "./src/ogp",
-    //     },
-    //     {
-    //       from: "ogp.png",
-    //       to: "./src/ogp",
-    //       context: "./src/ogp",
-    //     },
-    //   ],
-    // }),
-  ],
+  plugins: [],
   module: {
     rules: [
       {
@@ -36,8 +23,19 @@ module.exports = {
         loader: 'esbuild-loader',
         options: {
           loader: 'ts',
-          tsconfigRaw: require('./tsconfig.json'),
+          target: 'esnext',
         },
+      },
+      {
+        test: /\.br$/,
+        use: [
+          {
+            loader: 'file-loader',
+            options: {
+              name: '/bin/[name].[ext]',
+            },
+          },
+        ],
       },
     ],
   },
