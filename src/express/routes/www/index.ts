@@ -15,21 +15,29 @@ type QueryParams = {
 };
 
 const checkQuery = (query: any): QueryParams => {
-  if (typeof query.path !== 'string') {
+  const q = Object.keys(query).reduce((prev, k) => {
+    const newQuery = {
+      ...prev,
+      [k.replace('amp;', '')]: query[k],
+    };
+    return newQuery;
+  }, {} as any);
+
+  if (!q.path || typeof q.path !== 'string') {
     throw new Error('required path parameter');
   }
-  if (!/[1-9]*/.test(query.width)) {
+  if (!q.width || !/[0-9]*/.test(q.width)) {
     throw new Error('required width parameter');
   }
-  if (!/[1-9]*/.test(query.height)) {
+  if (!q.height || !/[0-9]*/.test(q.height)) {
     throw new Error('required height parameter');
   }
 
   return {
-    ...query,
-    path: query.path.replace(/   /g, '%20+%20'),
-    width: Number(query.width),
-    height: Number(query.height),
+    ...q,
+    path: q.path.replace(/   /g, '%20+%20'),
+    width: Number(q.width),
+    height: Number(q.height),
   };
 };
 
