@@ -38,15 +38,12 @@ module.exports = {
         ],
       },
       {
-        test: /\.(png|html)$/,
-        use: [
-          {
-            loader: 'file-loader',
-            options: {
-              name: '[path][name].[ext]',
-            },
-          },
-        ],
+        test: /\.(html)$/,
+        use: 'raw-loader',
+      },
+      {
+        test: /\.(png)$/,
+        use: 'url-loader',
       },
     ],
   },

@@ -5,15 +5,10 @@ import 'chrome-aws-lambda/bin/aws.tar.br';
 import 'chrome-aws-lambda/bin/chromium.br';
 import 'chrome-aws-lambda/bin/swiftshader.tar.br';
 
-const allowMimeTypes = [
-  'application/pdf',
-  'application/zip',
-  'multipart/form-data',
-  'image/png',
-];
+const allowMimeTypes = ['image/*', 'image/jpeg', 'image/png', 'image/svg+xml'];
 
 export const handler: Handler = (event: APIGatewayEvent, context: Context) => {
   const app = express();
-  const server = awsServerlessExpress.createServer(app, () => {}, allowMimeTypes);
+  const server = awsServerlessExpress.createServer(app, undefined, allowMimeTypes);
   awsServerlessExpress.proxy(server, event, context);
 };

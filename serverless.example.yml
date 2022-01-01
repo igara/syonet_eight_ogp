@@ -7,6 +7,11 @@ provider:
   memorySize: 512
   region: us-east-1
   stage: ${opt:stage, 'development'}
+  apiGateway:
+    binaryMediaTypes:
+      - 'image/png'
+      - 'image/*'
+      - '*/*'
 
 layers:
   chromeAWSLambda:

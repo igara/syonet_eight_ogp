@@ -1,9 +1,8 @@
 import express from 'express';
 import chromium from 'chrome-aws-lambda';
 import puppeteer from 'puppeteer-core';
-import fs from 'fs';
-import '@ogp/src/images/www/ogp_630x630.png';
-import '@ogp/src/html/www/title_and_first_image.html';
+import ogp630x630Image from '@ogp/src/images/www/ogp_630x630.png';
+import titleAndFirstImageHTML from '@ogp/src/html/www/title_and_first_image.html';
 
 const router = express.Router();
 
@@ -50,7 +49,12 @@ const sendOGP = (res: express.Response, ogp: Buffer) => {
 };
 
 const sendEmptyOGP = (res: express.Response) => {
-  const ogp = fs.readFileSync('src/images/www/ogp_630x630.png');
+  const regex = /^data:.+\/(.+);base64,(.*)$/;
+  const matches = (ogp630x630Image as unknown as string).match(regex);
+  if (!matches || !matches[2]) return;
+
+  const data = matches[2];
+  const ogp = Buffer.from(data, 'base64');
   sendOGP(res, ogp);
 };
 
@@ -60,7 +64,7 @@ const createPathOGPByTitleAndScreenshot = async (
   res: express.Response,
 ) => {
   let ogpTargetPage = await browser.newPage();
-  await ogpTargetPage.goto(`${process.env.HTTP_WWW_HOST}/${query.path}`);
+  await ogpTargetPage.goto(`${process.env.HTTP_WWW_HOST}${query.path}`);
 
   const ogpTitle = await ogpTargetPage.title();
 
@@ -81,12 +85,12 @@ const createPathOGPByTitleAndScreenshot = async (
   });
 
   const newOGPPage = await browser.newPage();
-  newOGPPage.setViewport({
+  await newOGPPage.setViewport({
     width: query.width,
     height: query.height,
   });
 
-  const html = fs.readFileSync('src/html/www/title_and_first_image.html').toString();
+  const html = titleAndFirstImageHTML as string;
   await newOGPPage.setContent(html);
 
   await newOGPPage.evaluate(
@@ -132,8 +136,11 @@ const createPathOGP = async (
 
 export const index = async (req: express.Request, res: express.Response) => {
   let browser;
+
   try {
     const query = checkQuery(req.query);
+
+    await chromium.font('https://syonet.work/fonts/Noto_Sans_JP/NotoSansJP-Bold.otf');
 
     browser = (await chromium.puppeteer.launch({
       args: chromium.args,
