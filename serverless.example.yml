@@ -1,0 +1,60 @@
+service: syonet-ogp
+
+provider:
+  name: aws
+  runtime: nodejs14.x
+  lambdaHashingVersion: 20201221
+  memorySize: 512
+  region: us-east-1
+  stage: ${opt:stage, 'development'}
+
+layers:
+  chromeAWSLambda:
+    package:
+      artifact: ../chrome-aws-lambda/chrome_aws_lambda.zip
+
+package:
+  individually: true
+  exclude:
+    - ../chrome-aws-lambda/chrome_aws_lambda.zip
+    - ../../node_modules/**
+
+functions:
+  express:
+    handler: src/lambda.handler
+    timeout: 900
+    events:
+      - http: ANY /
+      - http: 'ANY {proxy+}'
+    layers:
+      - { Ref: ChromeAWSLambdaLambdaLayer }
+
+plugins:
+  - serverless-offline
+  - serverless-domain-manager
+  - serverless-webpack
+  - serverless-dotenv-plugin
+
+custom:
+  customDomain:
+    domainName: ogp.syonet.work
+    certificateName: '*.syonet.work'
+    hostsZoneId: Z0558522HRVC0WR5LKMZ
+    certificateArn: arn:aws:acm:us-east-1:XXXXXXXX:certificate/xxxxx-xxxxx
+    createRoute53Record: true
+    stage: ${self:provider.stage}
+    endpointType: edge
+    basePath: ''
+  dotenv:
+    path: .env.${self:provider.stage}
+  webpack:
+    webpackConfig: 'webpack.serverless.config.js'
+    includeModules:
+      packagePath: '../../package.json'
+      forceExclude:
+        - chrome-aws-lambda
+        - aws-sdk
+    packager: yarn
+  serverless-offline:
+    useChildProcesses: true
+    allowCache: true
