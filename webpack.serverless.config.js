@@ -37,6 +37,17 @@ module.exports = {
           },
         ],
       },
+      {
+        test: /\.(png|html)$/,
+        use: [
+          {
+            loader: 'file-loader',
+            options: {
+              name: '[path][name].[ext]',
+            },
+          },
+        ],
+      },
     ],
   },
   resolve: {
@@ -46,5 +57,8 @@ module.exports = {
         configFile: 'tsconfig.json',
       }),
     ],
+    alias: {
+      '@ogp': path.resolve(__dirname),
+    },
   },
 };
