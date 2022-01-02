@@ -134,6 +134,32 @@ const createPathOGP = async (
   sendEmptyOGP(res);
 };
 
+/**
+ * @swagger
+ * /www:
+ *   get:
+ *     description: pathにあわせたOGP画像を生成する
+ *     produces:
+ *       - image/png
+ *     parameters:
+ *       - in: query
+ *         name: path
+ *         description: wwwのurlのドメインを除いたpath
+ *       - in: query
+ *         name: width
+ *         description: OGP画像の横幅
+ *       - in: query
+ *         name: height
+ *         description: OGP画像の縦幅
+ *     responses:
+ *       200:
+ *         description: OK
+ *         content:
+ *           application/png:
+ *             schema:
+ *               type: string
+ *               format: binary
+ */
 export const index = async (req: express.Request, res: express.Response) => {
   let browser;
 
