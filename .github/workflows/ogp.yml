@@ -24,6 +24,8 @@ jobs:
           submodules: true
       - name: Checkout submodule
         run: |
+          git submodule update --init --remote projects/chrome-aws-lambda
+          (cd projects/chrome-aws-lambda && git checkout master && git pull)
           git submodule update --init --remote projects/syonet_eight_ogp
           (cd projects/syonet_eight_ogp && git config remote.origin.fetch "+refs/heads/*:refs/remotes/origin/*" && git fetch && git checkout ${{ github.ref_name }})
       - name: Get yarn cache directory path
