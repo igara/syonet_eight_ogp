@@ -1,33 +1,41 @@
 import express from 'express';
-import index from './routes';
-import www from './routes/www';
-import swaggerUI from 'swagger-ui-express';
+import apiwww from './routes/api/www';
 import swaggerJSDoc from 'swagger-jsdoc';
+import swaggerHtml from '@ogp/src/html/swagger.html';
+import swaggerJSON from '@ogp/src/json/swagger.json';
 
 const main = () => {
   const app = express();
 
-  app.use('/', index);
-  app.use('/www', www);
+  app.get('/', (_, res) => {
+    res.set('Content-Type', 'text/html; charset=utf-8');
+    res.send(swaggerHtml);
+  });
 
-  const options = {
-    swaggerDefinition: {
-      info: {
-        title: 'syonet_eight_ogp',
-        version: '1.0.0',
-        description: 'OGP用API',
+  app.get(['/swagger.json'], async (_, res) => {
+    res.set('Content-Type', 'application/json; charset=utf-8');
+
+    if (process.env.NODE_ENV === 'production') {
+      res.send(swaggerJSON);
+      return;
+    }
+
+    const options = {
+      swaggerDefinition: {
+        info: {
+          title: 'syonet_eight_ogp',
+          version: '1.0.0',
+          description: 'OGP用API',
+        },
+        basePath: `/${process.env.NODE_ENV}`,
       },
-      basePath: process.env.NODE_ENV === 'production' ? '/' : `/${process.env.NODE_ENV}`,
-    },
-    // List of files to be processes. You can also set globs './routes/*.js'
-    apis: ['./**/*.ts'],
-  };
-  const specs = swaggerJSDoc(options);
-  app.use(
-    '/api-docs/',
-    swaggerUI.serveWithOptions({ redirect: false }),
-    swaggerUI.setup(specs),
-  );
+      apis: ['./**/*.ts'],
+    };
+    const specs = swaggerJSDoc(options);
+    res.send(specs);
+  });
+
+  app.use('/api/www', apiwww);
 
   app.use((err, res) => {
     console.error(err);

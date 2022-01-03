@@ -136,7 +136,7 @@ const createPathOGP = async (
 
 /**
  * @swagger
- * /www:
+ * /api/www:
  *   get:
  *     description: pathにあわせたOGP画像を生成する
  *     produces:
