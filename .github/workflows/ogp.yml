@@ -44,6 +44,8 @@ jobs:
       - name: install task
         run: |
           yarn
+          yarn build:chrome_aws_lambda
+          yarn reflash
       - name: lint & test task
         run: |
           yarn lint:ogp
