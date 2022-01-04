@@ -2,3 +2,4 @@
 .serverless
 serverless.yml
 node_modules
+local-s3

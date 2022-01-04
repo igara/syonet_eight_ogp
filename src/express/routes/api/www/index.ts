@@ -1,6 +1,7 @@
 import express from 'express';
 import chromium from 'chrome-aws-lambda';
 import puppeteer from 'puppeteer-core';
+import AWS from 'aws-sdk';
 import ogp630x630Image from '@ogp/src/images/www/ogp_630x630.png';
 import titleAndFirstImageHTML from '@ogp/src/html/www/title_and_first_image.html';
 
@@ -63,6 +64,37 @@ const createPathOGPByTitleAndScreenshot = async (
   query: QueryParams,
   res: express.Response,
 ) => {
+  const s3 =
+    process.env.HTTP_WWW_HOST === 'http://localhost:3000'
+      ? new AWS.S3({
+          s3ForcePathStyle: true,
+          accessKeyId: 'S3RVER',
+          secretAccessKey: 'S3RVER',
+          endpoint: new AWS.Endpoint('http://localhost:4569'),
+        })
+      : new AWS.S3();
+
+  try {
+    const s3Object = await s3
+      .getObject({
+        Bucket: 'syonet-eight-ogp',
+        Key: `www${query.path}.png`,
+      })
+      .promise();
+
+    if (s3Object.Body) {
+      const data = s3Object.Body.toString('base64');
+      const ogp = Buffer.from(data, 'base64');
+      sendOGP(res, ogp);
+      return;
+    }
+  } catch (error) {
+    if ((error as any).code !== 'NoSuchKey') {
+      console.error(error);
+      throw new Error('S3からファイルアクセスできませんでした');
+    }
+  }
+
   let ogpTargetPage = await browser.newPage();
   await ogpTargetPage.goto(`${process.env.HTTP_WWW_HOST}${query.path}`);
 
@@ -83,6 +115,7 @@ const createPathOGPByTitleAndScreenshot = async (
 
     return canvas.toDataURL('image/png');
   });
+  await ogpTargetPage.close();
 
   const newOGPPage = await browser.newPage();
   await newOGPPage.setViewport({
@@ -117,7 +150,26 @@ const createPathOGPByTitleAndScreenshot = async (
   const b64string: string = (await newOGPPage.screenshot({
     encoding: 'base64',
   })) as string;
+  await newOGPPage.close();
+
   const ogp: Buffer = Buffer.from(b64string, 'base64');
+
+  try {
+    await s3
+      .putObject({
+        Bucket: 'syonet-eight-ogp',
+        Key: `www${query.path}.png`,
+        Body: ogp,
+        ContentType: 'image/png',
+        CacheControl: 'max-age=86400',
+        Expires: new Date(new Date().getTime() + 86400 * 1000),
+      })
+      .promise();
+  } catch (error) {
+    console.error(error);
+    throw new Error('S3にファイル保存に失敗しました');
+  }
+
   sendOGP(res, ogp);
 };
 

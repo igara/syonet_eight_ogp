@@ -12,6 +12,13 @@ provider:
       - 'image/png'
       - 'image/*'
       - '*/*'
+  iam:
+    role:
+      statements:
+        - Effect: 'Allow'
+          Action:
+            - s3:*
+          Resource: '*'
 
 layers:
   chromeAWSLambda:
@@ -31,6 +38,7 @@ functions:
     events:
       - http: ANY /
       - http: 'ANY {proxy+}'
+    # architecture: arm64
     layers:
       - { Ref: ChromeAWSLambdaLambdaLayer }
 
@@ -39,6 +47,7 @@ plugins:
   - serverless-domain-manager
   - serverless-webpack
   - serverless-dotenv-plugin
+  - serverless-s3-local
 
 custom:
   customDomain:
@@ -50,6 +59,9 @@ custom:
     stage: ${self:provider.stage}
     endpointType: edge
     basePath: ''
+  s3:
+    host: 0.0.0.0
+    directory: ./local-s3
   dotenv:
     path: .env.${self:provider.stage}
   webpack:
@@ -63,3 +75,10 @@ custom:
   serverless-offline:
     useChildProcesses: true
     allowCache: true
+
+resources:
+  Resources:
+    NewResource:
+      Type: AWS::S3::Bucket
+      Properties:
+        BucketName: syonet-eight-ogp
