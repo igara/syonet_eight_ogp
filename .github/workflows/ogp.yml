@@ -44,6 +44,7 @@ jobs:
       - name: install task
         run: |
           yarn
+          yarn zip:chrome_aws_lambda
           yarn build:chrome_aws_lambda
           yarn cache clean chrome-aws-lambda
           yarn reflash
