@@ -45,6 +45,7 @@ jobs:
         run: |
           yarn
           yarn build:chrome_aws_lambda
+          yarn cache clean chrome-aws-lambda
           yarn reflash
       - name: lint & test task
         run: |
