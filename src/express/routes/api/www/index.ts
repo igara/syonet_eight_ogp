@@ -178,7 +178,7 @@ const createPathOGP = async (
   query: QueryParams,
   res: express.Response,
 ) => {
-  if (/^\/blogs\/[qiita|hatena|speakerdeck|zenn]\/\S*/.test(query.path)) {
+  if (/^\/blogs\/(qiita|hatena|speakerdeck|zenn)\/\S*/.test(query.path)) {
     await createPathOGPByTitleAndScreenshot(browser, query, res);
     return;
   }
