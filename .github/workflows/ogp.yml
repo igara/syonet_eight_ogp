@@ -51,4 +51,3 @@ jobs:
       - name: lint & test task
         run: |
           yarn lint:ogp
-          yarn test:ogp
