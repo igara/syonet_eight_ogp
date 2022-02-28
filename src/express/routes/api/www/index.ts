@@ -78,7 +78,7 @@ const createPathOGPByTitleAndScreenshot = async (
     const s3Object = await s3
       .getObject({
         Bucket: 'syonet-eight-ogp',
-        Key: `www${query.path}.png`,
+        Key: `www${query.path}_${query.width}x${query.height}.png`,
       })
       .promise();
 
@@ -158,7 +158,7 @@ const createPathOGPByTitleAndScreenshot = async (
     await s3
       .putObject({
         Bucket: 'syonet-eight-ogp',
-        Key: `www${query.path}.png`,
+        Key: `www${query.path}_${query.width}x${query.height}.png`,
         Body: ogp,
         ContentType: 'image/png',
         CacheControl: 'max-age=86400',
