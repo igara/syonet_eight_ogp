@@ -19,6 +19,13 @@ provider:
           Action:
             - s3:*
           Resource: '*'
+  usagePlan:
+    quota:
+      limit: 5000
+      period: DAY
+    throttle:
+      burstLimit: 200
+      rateLimit: 100
 
 layers:
   chromeAWSLambda:
@@ -41,6 +48,8 @@ functions:
     # architecture: arm64
     layers:
       - { Ref: ChromeAWSLambdaLambdaLayer }
+    cors:
+      origin: '*'
 
 plugins:
   - serverless-offline

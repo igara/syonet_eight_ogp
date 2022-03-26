@@ -3,9 +3,12 @@ import apiwww from './routes/api/www';
 import swaggerJSDoc from 'swagger-jsdoc';
 import swaggerHtml from '@ogp/src/html/swagger.html';
 import swaggerJSON from '@ogp/src/json/swagger.json';
+import cors from 'cors';
 
 const main = () => {
   const app = express();
+
+  app.use(cors());
 
   app.get('/', (_, res) => {
     res.set('Content-Type', 'text/html; charset=utf-8');
