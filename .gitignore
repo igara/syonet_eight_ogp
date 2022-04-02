@@ -3,3 +3,6 @@
 serverless.yml
 node_modules
 local-s3
+.env
+.env.development
+.env.production
