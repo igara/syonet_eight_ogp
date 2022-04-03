@@ -37,6 +37,7 @@ functions:
     timeout: 900
     events:
       - http: ANY /
+      - http: 'ANY {proxy+}'
     # architecture: arm64
     layers:
       - { Ref: ChromeAWSLambdaLambdaLayer }
