@@ -1,5 +1,8 @@
 service: syonet-ogp
 
+frameworkVersion: '3'
+useDotenv: true
+
 provider:
   name: aws
   runtime: nodejs14.x
@@ -19,6 +22,9 @@ provider:
           Action:
             - s3:*
           Resource: '*'
+  environment:
+    HTTP_WWW_HOST: ${env:HTTP_WWW_HOST}
+    NODE_ENV: ${env:ENV}
 
 layers:
   chromeAWSLambda:
@@ -46,7 +52,6 @@ plugins:
   - serverless-offline
   - serverless-domain-manager
   - serverless-webpack
-  - serverless-dotenv-plugin
   - serverless-s3-local
 
 custom:
@@ -62,8 +67,6 @@ custom:
   s3:
     host: 0.0.0.0
     directory: ./local-s3
-  dotenv:
-    path: .env.${self:provider.stage}
   webpack:
     webpackConfig: 'webpack.serverless.config.js'
     includeModules:

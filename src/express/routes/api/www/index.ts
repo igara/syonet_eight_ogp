@@ -64,6 +64,9 @@ const createPathOGPByTitleAndScreenshot = async (
   query: QueryParams,
   res: express.Response,
 ) => {
+  console.log(1111);
+  console.log(process.env.HTTP_WWW_HOST);
+  console.log(9999);
   const s3 =
     process.env.HTTP_WWW_HOST === 'http://localhost:3000'
       ? new AWS.S3({
@@ -218,7 +221,9 @@ export const index = async (req: express.Request, res: express.Response) => {
   try {
     const query = checkQuery(req.query);
 
-    await chromium.font('https://syonet.work/fonts/Noto_Sans_JP/NotoSansJP-Bold.otf');
+    await chromium.font(
+      `${process.env.HTTP_WWW_HOST}fonts/Noto_Sans_JP/NotoSansJP-Bold.otf`,
+    );
 
     browser = (await chromium.puppeteer.launch({
       args: chromium.args,
