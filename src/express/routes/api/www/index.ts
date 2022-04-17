@@ -64,9 +64,6 @@ const createPathOGPByTitleAndScreenshot = async (
   query: QueryParams,
   res: express.Response,
 ) => {
-  console.log(1111);
-  console.log(process.env.HTTP_WWW_HOST);
-  console.log(9999);
   const s3 =
     process.env.HTTP_WWW_HOST === 'http://localhost:3000'
       ? new AWS.S3({
