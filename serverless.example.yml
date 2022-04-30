@@ -9,7 +9,7 @@ provider:
   lambdaHashingVersion: 20201221
   memorySize: 512
   region: us-east-1
-  stage: ${opt:stage, 'development'}
+  stage: production
   apiGateway:
     binaryMediaTypes:
       - 'image/png'
@@ -40,7 +40,7 @@ package:
 functions:
   express:
     handler: src/lambda.handler
-    timeout: 900
+    timeout: 60
     events:
       - http: ANY /
       - http: 'ANY {proxy+}'

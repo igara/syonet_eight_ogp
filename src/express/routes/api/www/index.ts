@@ -96,6 +96,7 @@ const createPathOGPByTitleAndScreenshot = async (
   }
 
   let ogpTargetPage = await browser.newPage();
+  await ogpTargetPage.setDefaultNavigationTimeout(0);
   await ogpTargetPage.goto(`${process.env.HTTP_WWW_HOST}${query.path}`);
 
   const ogpTitle = await ogpTargetPage.title();
@@ -118,6 +119,7 @@ const createPathOGPByTitleAndScreenshot = async (
   await ogpTargetPage.close();
 
   const newOGPPage = await browser.newPage();
+  await newOGPPage.setDefaultNavigationTimeout(0);
   await newOGPPage.setViewport({
     width: query.width,
     height: query.height,
@@ -219,7 +221,7 @@ export const index = async (req: express.Request, res: express.Response) => {
     const query = checkQuery(req.query);
 
     await chromium.font(
-      `${process.env.HTTP_WWW_HOST}fonts/Noto_Sans_JP/NotoSansJP-Bold.otf`,
+      `${process.env.HTTP_WWW_HOST}/fonts/Noto_Sans_JP/NotoSansJP-Bold.otf`,
     );
 
     browser = (await chromium.puppeteer.launch({
